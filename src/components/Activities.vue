@@ -7,11 +7,12 @@
       <button @click='logOut'>Log out</button>
     </header>
     <ul class="activities">
-      <li v-for="(value, key, index) in activities">
+      <li :key="key" v-for="(value, key) in activities">
         <time>{{activities[key][0].createdAt.seconds | formatDate }}</time>
         <ul>
-          <li v-for="activity in activities[key]">
-            <span  class="type">{{ activity.prettyType }}</span> - <span class="body">{{ activity.body }}</span>
+          <li :key="activity.id" v-for="activity in activities[key]">
+            <span  class="type">{{ activity.prettyType }}</span> - <span class="body">{{activity.child}}, {{ activity.body }}</span>
+            <img :src="activity.photoURL" />
           </li>
         </ul>
       </li>
@@ -20,9 +21,9 @@
 </template>
 
 <script>
-import firebase from 'firebase';
-import 'firebase/firestore';
-import { formatDate, dateKey } from '../helpers/date';
+import firebase from 'firebase'
+import 'firebase/firestore'
+import { formatDate, dateKey } from '../helpers/date'
 
 export default {
   data() {
@@ -32,8 +33,8 @@ export default {
       name: '',
       email: '',
       user: {},
-      activities: [],
-    };
+      activities: []
+    }
   },
   // watch: {
   //   activities: function(_el) {
@@ -44,45 +45,46 @@ export default {
   created() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.user = user;
-        this.name = this.user.displayName;
-        this.email = this.user.email;
-        this.photo = this.user.photoURL;
-        this.userId = this.user.uid;
-        this.activities = {};
+        this.user = user
+        this.name = this.user.displayName
+        this.email = this.user.email
+        this.photo = this.user.photoURL
+        this.userId = this.user.uid
+        this.activities = {}
 
-        var db = firebase.firestore();
-        const settings = { timestampsInSnapshots: true };
-        db.settings(settings);
+        var db = firebase.firestore()
+        const settings = { timestampsInSnapshots: true }
+        db.settings(settings)
 
-        db.collection('users')
+        db
+          .collection('users')
           .doc(this.userId)
           .collection('activities')
           .get()
           .then(querySnapshot => {
             querySnapshot.forEach(doc => {
               // console.log('doc', doc);
-              const data = doc.data();
+              const data = doc.data()
               if (!this.activities[dateKey(data.createdAt.seconds)]) {
-                this.activities[dateKey(data.createdAt.seconds)] = [];
+                this.activities[dateKey(data.createdAt.seconds)] = []
               }
-              this.activities[dateKey(data.createdAt.seconds)].push(data);
-              // console.log(this.activities);
-              this.$forceUpdate();
-            });
+              this.activities[dateKey(data.createdAt.seconds)].push(data)
+              console.log(this.activities)
+              this.$forceUpdate()
+            })
           })
           .catch(function(error) {
-            console.error('Error adding document: ', error);
-          });
+            console.error('Error adding document: ', error)
+          })
       }
-    });
+    })
   },
   methods: {
     logOut() {
-      firebase.auth().signOut();
-    },
-  },
-};
+      firebase.auth().signOut()
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -136,6 +138,10 @@ header button {
 /* ul {
   text-align: left;
 } */
+
+img {
+  max-width: 100px;
+}
 
 .type {
   color: rgba(255, 255, 255, 0.4);

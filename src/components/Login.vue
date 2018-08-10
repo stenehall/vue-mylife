@@ -6,34 +6,35 @@
 </template>
 
 <script>
-import firebase from 'firebase';
+import firebase from 'firebase'
 import firebaseui from 'firebaseui'
-import {config} from '../helpers/firebaseConfig';
+import { config } from '../helpers/firebaseConfig'
 
 export default {
   name: 'Login',
   mounted() {
-      var uiConfig = {
-        signInSuccessUrl: '/success',
-        signInOptions: [
-          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-          firebase.auth.EmailAuthProvider.PROVIDER_ID
-          ]
-        };
-      var ui = new firebaseui.auth.AuthUI(firebase.auth());
-      ui.start('#firebaseui-auth-container', uiConfig);
-      },
+    var uiConfig = {
+      signInSuccessUrl: '/success',
+      signInOptions: [
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID
+      ]
+    }
+    var ui = new firebaseui.auth.AuthUI(firebase.auth())
+    ui.start('#firebaseui-auth-container', uiConfig)
+  },
   data() {
     return {
-      msg: 'Login to MyLife',
-    };
-  },
-};
+      msg: 'Login to MyLife'
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
+h1,
+h2 {
   font-weight: normal;
 }
 ul {
